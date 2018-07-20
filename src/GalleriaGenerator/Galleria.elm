@@ -1,4 +1,8 @@
-module GalleriaGenerator.Galleria exposing (Gallery)
+module GalleriaGenerator.Galleria exposing (Gallery, Message, update, view)
+
+import Html
+import Html.Attributes as Attribute
+
 
 -- Model
 
@@ -20,11 +24,23 @@ type alias Photo =
 -- Update
 
 
-type GalleryMessage
+type Message
     = ChangeTitle String
 
-update : GalleryMessage -> Gallery -> (Gallery, Cmd msg)
+
+update : Message -> Gallery -> ( Gallery, Cmd msg )
 update message gallery =
     case message of
-        ChangeTitle newTitle -> ({ gallery | title = newTitle }, Cmd.none)
+        ChangeTitle newTitle ->
+            ( { gallery | title = newTitle }, Cmd.none )
 
+
+
+-- View
+
+
+view : Gallery -> Html.Html Message
+view gallery =
+    Html.div [ Attribute.class "gallery" ]
+        [ Html.h1 [ Attribute.class "title" ] [ Html.text gallery.title ]
+        ]

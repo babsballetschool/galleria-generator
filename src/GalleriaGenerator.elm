@@ -1,8 +1,28 @@
 module GalleriaGenerator exposing (..)
 
-import Html
-import GalleriaGenerator.Galleria exposing (Gallery)
+import Html exposing (program)
+import GalleriaGenerator.Galleria as Galleria
 
 
+main : Program Never Galleria.Gallery Galleria.Message
 main =
-    Html.text "Hello, World!"
+    program
+        { init = init
+        , view = Galleria.view
+        , update = Galleria.update
+        , subscriptions = \_ -> Sub.none
+        }
+
+
+init : ( Galleria.Gallery, Cmd Galleria.Message )
+init =
+    ( emptyGallery
+    , Cmd.none
+    )
+
+
+emptyGallery : Galleria.Gallery
+emptyGallery =
+    { title = "Change me"
+    , photos = []
+    }
