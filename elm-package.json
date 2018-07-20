@@ -1,7 +1,7 @@
 {
     "version": "1.0.0",
     "summary": "Galleria JSON generator",
-    "repository": "https://github.com/babsballetschool/galleria-generator",
+    "repository": "https://github.com/babsballetschool/galleria-generator.git",
     "license": "MIT",
     "source-directories": [
         "src"
