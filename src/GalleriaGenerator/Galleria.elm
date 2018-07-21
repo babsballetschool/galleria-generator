@@ -9,6 +9,7 @@ import Html.Attributes as Attribute
 
 type alias Gallery =
     { title : String
+    , changingTitle : Bool
     , photos : List Photo
     }
 
@@ -25,14 +26,18 @@ type alias Photo =
 
 
 type Message
-    = ChangeTitle String
+    = ChangeTitle
+    | UpdateTitle String
 
 
 update : Message -> Gallery -> ( Gallery, Cmd msg )
 update message gallery =
     case message of
-        ChangeTitle newTitle ->
-            ( { gallery | title = newTitle }, Cmd.none )
+        ChangeTitle ->
+            ( { gallery | changingTitle = True }, Cmd.none )
+
+        UpdateTitle newTitle ->
+            ( { gallery | changingTitle = False, title = newTitle }, Cmd.none )
 
 
 

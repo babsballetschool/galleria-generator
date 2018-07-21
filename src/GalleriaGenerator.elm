@@ -24,5 +24,6 @@ init =
 emptyGallery : Galleria.Gallery
 emptyGallery =
     { title = "Change me"
+    , changingTitle = False
     , photos = []
     }
