@@ -1,4 +1,4 @@
-module GalleriaGenerator.Galleria exposing (Gallery, Message, update, view)
+module GalleriaGenerator.Galleria exposing (Gallery, Message(..), update, view)
 
 import Html
 import Html.Attributes as Attribute
