@@ -71,8 +71,8 @@ view : Gallery -> Html.Html Message
 view gallery =
     Html.div [ Attribute.class "gallery" ]
         [ (title gallery)
+        , Html.div [ Attribute.class "photos" ] (photosView gallery.photos)
         ]
-        ++ (photosView gallery.photos)
 
 
 title : Gallery -> Html.Html Message

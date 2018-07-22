@@ -1,6 +1,7 @@
 module GalleriaGenerator exposing (..)
 
 import Html exposing (program)
+import Html.Attributes as Attribute
 import GalleriaGenerator.Galleria as Galleria
 
 
@@ -27,3 +28,14 @@ emptyGallery =
     , changingTitle = False
     , photos = []
     }
+
+
+
+-- View
+
+
+view : Galleria.Gallery -> Html.Html Galleria.Message
+view gallery =
+    Html.div [ Attribute.class "application" ]
+        [ Galleria.view gallery
+        ]
