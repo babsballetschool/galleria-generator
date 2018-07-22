@@ -32,6 +32,7 @@ type Message
     | ChangeTitle
     | UpdateTitle String
     | ChooseTitle
+    | AddPhoto String
 
 
 update : Message -> Gallery -> ( Gallery, Cmd msg )
@@ -48,6 +49,14 @@ update message gallery =
 
         ChooseTitle ->
             ( { gallery | changingTitle = False }, Cmd.none )
+
+        AddPhoto src ->
+            let
+                photo : Photo
+                photo =
+                    { src = src, title = Nothing, description = Nothing }
+            in
+                ( { gallery | photos = gallery.photos ++ [ photo ] }, Cmd.none )
 
 
 
