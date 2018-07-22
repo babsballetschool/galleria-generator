@@ -72,6 +72,7 @@ view gallery =
     Html.div [ Attribute.class "gallery" ]
         [ (title gallery)
         ]
+        ++ (photosView gallery.photos)
 
 
 title : Gallery -> Html.Html Message
@@ -111,3 +112,15 @@ whenEnter message index =
         message
     else
         DoNothing
+
+
+photosView : List Photo -> List (Html.Html Message)
+photosView photos =
+    List.map photoView photos
+
+
+photoView : Photo -> Html.Html Message
+photoView photo =
+    Html.div [ Attribute.class "photo" ]
+        [ Html.span [ Attribute.class "source" ] [ Html.text photo.src ]
+        ]
