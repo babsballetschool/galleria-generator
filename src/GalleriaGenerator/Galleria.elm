@@ -37,26 +37,30 @@ type Message
 
 update : Message -> Gallery -> ( Gallery, Cmd msg )
 update message gallery =
-    case message of
-        DoNothing ->
-            ( gallery, Cmd.none )
+    let
+        nextGallery =
+            case message of
+                DoNothing ->
+                    gallery
 
-        ChangeTitle ->
-            ( { gallery | changingTitle = True }, Cmd.none )
+                ChangeTitle ->
+                    { gallery | changingTitle = True }
 
-        UpdateTitle newTitle ->
-            ( { gallery | title = newTitle }, Cmd.none )
+                UpdateTitle newTitle ->
+                    { gallery | title = newTitle }
 
-        ChooseTitle ->
-            ( { gallery | changingTitle = False }, Cmd.none )
+                ChooseTitle ->
+                    { gallery | changingTitle = False }
 
-        AddPhoto src ->
-            let
-                photo : Photo
-                photo =
-                    { src = src, title = Nothing, description = Nothing }
-            in
-                ( { gallery | photos = gallery.photos ++ [ photo ] }, Cmd.none )
+                AddPhoto src ->
+                    let
+                        photo : Photo
+                        photo =
+                            { src = src, title = Nothing, description = Nothing }
+                    in
+                        { gallery | photos = gallery.photos ++ [ photo ] }
+    in
+        ( nextGallery, Cmd.none )
 
 
 
