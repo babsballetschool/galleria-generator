@@ -79,14 +79,27 @@ update message application =
 
 view : Application -> Html.Html Message
 view application =
-    Html.div [ Attribute.class "application" ]
-        [ Html.input
-            [ Attribute.type_ "input"
-            , Attribute.placeholder "source"
-            , Event.onInput UpdatePhotoSource
-            , Event.onBlur (GalleryMessage (Galleria.AddPhoto application.photoSource))
-            , onKeyDown (whenEnter ((GalleryMessage (Galleria.AddPhoto application.photoSource))) (GalleryMessage Galleria.DoNothing))
+    let
+        makeGalleryMessage : Galleria.Message -> Message
+        makeGalleryMessage message =
+            GalleryMessage message
+
+        addPhotoOnEnter =
+            (transform makeGalleryMessage whenEnter) (Galleria.AddPhoto application.photoSource) Galleria.DoNothing
+    in
+        Html.div [ Attribute.class "application" ]
+            [ Html.input
+                [ Attribute.type_ "input"
+                , Attribute.placeholder "source"
+                , Event.onInput UpdatePhotoSource
+                , Event.onBlur (GalleryMessage (Galleria.AddPhoto application.photoSource))
+                , onKeyDown addPhotoOnEnter
+                ]
+                []
+            , Html.map makeGalleryMessage (Galleria.view application.gallery)
             ]
-            []
-        , Html.map (\message -> GalleryMessage message) (Galleria.view application.gallery)
-        ]
+
+
+transform : (a -> b) -> (b -> b -> Int -> c) -> (a -> a -> Int -> c)
+transform mapper function =
+    \left right index -> function (mapper left) (mapper right) index
