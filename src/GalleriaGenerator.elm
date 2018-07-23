@@ -70,7 +70,7 @@ update message application =
                 ( nextGallery, command ) =
                     Galleria.update galleryMessage application.gallery
             in
-                ( { application | gallery = nextGallery }, Cmd.none )
+                ( { application | gallery = nextGallery, photoSource = "" }, Cmd.none )
 
 
 
