@@ -3,8 +3,7 @@ module GalleriaGenerator.Galleria exposing (Gallery, Message(..), update, view)
 import Html
 import Html.Attributes as Attribute
 import Html.Events as Event
-import Json.Decode as Json
-
+import GalleriaGenerator.Events exposing (onKeyDown, whenEnter)
 
 -- Model
 
@@ -95,23 +94,10 @@ title gallery =
                 , Attribute.defaultValue gallery.title
                 , Event.onInput (\newTitle -> UpdateTitle newTitle)
                 , Event.onBlur ChooseTitle
-                , onKeyDown (whenEnter ChooseTitle)
+                , onKeyDown (whenEnter ChooseTitle DoNothing)
                 ]
                 []
             ]
-
-
-onKeyDown : (Int -> msg) -> Html.Attribute msg
-onKeyDown tagger =
-    Event.on "keydown" (Json.map tagger Event.keyCode)
-
-
-whenEnter : Message -> Int -> Message
-whenEnter message index =
-    if index == 13 then
-        message
-    else
-        DoNothing
 
 
 photosView : List Photo -> List (Html.Html Message)
