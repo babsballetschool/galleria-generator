@@ -92,7 +92,6 @@ view application =
                 [ Attribute.type_ "input"
                 , Attribute.placeholder "source"
                 , Event.onInput UpdatePhotoSource
-                , Event.onBlur (GalleryMessage (Galleria.AddPhoto application.photoSource))
                 , onKeyDown addPhotoOnEnter
                 ]
                 []
