@@ -61,16 +61,20 @@ type Message
 
 update : Message -> Application -> ( Application, Cmd Message )
 update message application =
-    case message of
-        UpdatePhotoSource photoSource ->
-            ( { application | photoSource = photoSource }, Cmd.none )
+    let
+        nextApplication =
+            case message of
+                UpdatePhotoSource photoSource ->
+                    { application | photoSource = photoSource }
 
-        GalleryMessage galleryMessage ->
-            let
-                ( nextGallery, command ) =
-                    Galleria.update galleryMessage application.gallery
-            in
-                ( { application | gallery = nextGallery, photoSource = "" }, Cmd.none )
+                GalleryMessage galleryMessage ->
+                    let
+                        ( nextGallery, command ) =
+                            Galleria.update galleryMessage application.gallery
+                    in
+                        { application | gallery = nextGallery, photoSource = "" }
+    in
+        ( nextApplication, Cmd.none )
 
 
 
