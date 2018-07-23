@@ -52,12 +52,16 @@ update message gallery =
                     { gallery | changingTitle = False }
 
                 AddPhoto src ->
-                    let
-                        photo : Photo
-                        photo =
-                            { src = src, title = Nothing, description = Nothing }
-                    in
-                        { gallery | photos = gallery.photos ++ [ photo ] }
+                    if String.isEmpty src then
+                        gallery
+                    else
+
+                        let
+                            photo : Photo
+                            photo =
+                                { src = src, title = Nothing, description = Nothing }
+                        in
+                            { gallery | photos = gallery.photos ++ [ photo ] }
     in
         ( nextGallery, Cmd.none )
 
