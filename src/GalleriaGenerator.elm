@@ -91,6 +91,7 @@ view application =
             [ Html.input
                 [ Attribute.type_ "input"
                 , Attribute.placeholder "source"
+                , Attribute.value application.photoSource
                 , Event.onInput UpdatePhotoSource
                 , onKeyDown addPhotoOnEnter
                 ]
