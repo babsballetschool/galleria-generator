@@ -5,6 +5,7 @@ import Html.Attributes as Attribute
 import Html.Events as Event
 import GalleriaGenerator.Events exposing (onKeyDown, whenEnter)
 
+
 -- Model
 
 
@@ -55,7 +56,6 @@ update message gallery =
                     if String.isEmpty src then
                         gallery
                     else
-
                         let
                             photo : Photo
                             photo =
@@ -111,6 +111,17 @@ photosView photos =
 
 photoView : Photo -> Html.Html Message
 photoView photo =
-    Html.div [ Attribute.class "photo" ]
-        [ Html.span [ Attribute.class "source" ] [ Html.text photo.src ]
-        ]
+    let
+        photoTitle =
+            Maybe.withDefault "" photo.title
+
+        photoDescription =
+            Maybe.withDefault "" photo.description
+    in
+        Html.div [ Attribute.class "photo" ]
+            [ Html.span [ Attribute.class "source" ] [ Html.text photo.src ]
+            , Html.label [ Attribute.class "title-label", Attribute.for "photo-title" ] [ Html.text "title:" ]
+            , Html.input [ Attribute.type_ "input", Attribute.placeholder "title", Attribute.value photoTitle, Attribute.name "photo-title" ] []
+            , Html.label [ Attribute.class "description-label", Attribute.for "photo-description" ] [ Html.text "description:" ]
+            , Html.input [ Attribute.type_ "input", Attribute.placeholder "description", Attribute.value photoDescription, Attribute.name "photo-description" ] []
+            ]
