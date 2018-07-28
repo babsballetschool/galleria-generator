@@ -1,8 +1,9 @@
-module GalleriaGenerator.Galleria exposing (Gallery, Message(..), update, view)
+module GalleriaGenerator.Galleria exposing (Gallery, Message(..), update, view, encodeGallery)
 
 import Html
 import Html.Attributes as Attribute
 import Html.Events as Event
+import Json.Encode as Encode
 import GalleriaGenerator.Events exposing (onKeyDown, whenEnter)
 
 
@@ -21,6 +22,40 @@ type alias Photo =
     , title : Maybe String
     , description : Maybe String
     }
+
+
+
+-- Encode
+
+
+encodeGallery : Gallery -> Encode.Value
+encodeGallery gallery =
+    let
+        photos =
+            List.map encodePhoto gallery.photos
+    in
+        Encode.object
+            [ ( "title", Encode.string gallery.title )
+            , ( "photos", Encode.list photos )
+            ]
+
+
+encodePhoto : Photo -> Encode.Value
+encodePhoto photo =
+    let
+        encodeOptionalString wrappedValue =
+            case wrappedValue of
+                Just value ->
+                    Encode.string value
+
+                Nothing ->
+                    Encode.null
+    in
+        Encode.object
+            [ ( "src", Encode.string photo.src )
+            , ( "title", encodeOptionalString photo.title )
+            , ( "description", encodeOptionalString photo.description )
+            ]
 
 
 
