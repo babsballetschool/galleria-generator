@@ -3,7 +3,8 @@ module GalleriaGenerator exposing (..)
 import Html exposing (program)
 import Html.Attributes as Attribute
 import Html.Events as Event
-import Json.Decode as Json
+import Json.Decode as Decode
+import Json.Encode as Encode
 import GalleriaGenerator.Galleria as Galleria
 import GalleriaGenerator.Events exposing (onKeyDown, whenEnter)
 
@@ -101,6 +102,10 @@ view application =
                 ]
                 []
             , Html.map makeGalleryMessage (Galleria.view application.gallery)
+            , Html.div [ Attribute.class "encoding" ]
+                [ Html.pre []
+                    [ Html.text (Encode.encode 4 (Galleria.encodeGallery application.gallery)) ]
+                ]
             ]
 
 
