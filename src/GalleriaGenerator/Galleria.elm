@@ -154,16 +154,34 @@ photosView photos =
 photoView : Photo -> Html.Html Message
 photoView photo =
     let
-        photoTitle =
+        titleValue photo =
             Maybe.withDefault "" photo.title
 
-        photoDescription =
+        descriptionValue photo =
             Maybe.withDefault "" photo.description
     in
         Html.div [ Attribute.class "photo" ]
             [ Html.span [ Attribute.class "source" ] [ Html.text photo.src ]
             , Html.label [ Attribute.class "title-label", Attribute.for "photo-title" ] [ Html.text "title:" ]
-            , Html.input [ Attribute.type_ "input", Attribute.placeholder "title", Attribute.value photoTitle, Attribute.name "photo-title" ] []
+            , (photoAttribute .changingTitle titleValue photo "title" "photo-title")
             , Html.label [ Attribute.class "description-label", Attribute.for "photo-description" ] [ Html.text "description:" ]
-            , Html.input [ Attribute.type_ "input", Attribute.placeholder "description", Attribute.value photoDescription, Attribute.name "photo-description" ] []
+            , (photoAttribute .changingDescription descriptionValue photo "description" "photo-description")
             ]
+
+
+photoAttribute : (Photo -> Bool) -> (Photo -> String) -> Photo -> String -> String -> Html.Html Message
+photoAttribute changing valueOf photo placeholder name =
+    let
+        value =
+            valueOf photo
+    in
+        if changing photo then
+            Html.input
+                [ Attribute.type_ "input"
+                , Attribute.placeholder placeholder
+                , Attribute.name name
+                , Attribute.value value
+                ]
+                []
+        else
+            Html.text ("'" ++ value ++ "'")
