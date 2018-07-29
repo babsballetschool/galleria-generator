@@ -40,6 +40,19 @@ encode photo =
 
 
 
+-- Update
+
+
+type Message
+    = StartChangingTitle
+    | UpdateTitle String
+    | StopChangingTitle
+    | StartChangingDescription
+    | UpdateDescription String
+    | StopChangingDescription
+
+
+
 -- View
 
 
@@ -54,9 +67,17 @@ view photo =
     in
         Html.div [ Attribute.class "photo" ]
             [ Html.span [ Attribute.class "source" ] [ Html.text photo.src ]
-            , Html.label [ Attribute.class "title-label", Attribute.for "photo-title" ] [ Html.text "title:" ]
+            , Html.label
+                [ Attribute.class "title-label"
+                , Attribute.for "photo-title"
+                ]
+                [ Html.text "title:" ]
             , (photoAttribute .changingTitle titleValue photo "title" "photo-title")
-            , Html.label [ Attribute.class "description-label", Attribute.for "photo-description" ] [ Html.text "description:" ]
+            , Html.label
+                [ Attribute.class "description-label"
+                , Attribute.for "photo-description"
+                ]
+                [ Html.text "description:" ]
             , (photoAttribute .changingDescription descriptionValue photo "description" "photo-description")
             ]
 
