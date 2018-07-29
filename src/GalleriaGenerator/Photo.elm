@@ -52,6 +52,38 @@ type Message
     | StopChangingDescription
 
 
+update : Message -> Photo -> ( Photo, Cmd msg )
+update message photo =
+    let
+        nextPhoto =
+            case message of
+                StartChangingTitle ->
+                    { photo | changingTitle = True }
+
+                UpdateTitle title ->
+                    if String.isEmpty title then
+                        { photo | title = Nothing }
+                    else
+                        { photo | title = Just title }
+
+                StopChangingTitle ->
+                    { photo | changingTitle = False }
+
+                StartChangingDescription ->
+                    { photo | changingDescription = True }
+
+                UpdateDescription description ->
+                    if String.isEmpty description then
+                        { photo | description = Nothing }
+                    else
+                        { photo | description = Just description }
+
+                StopChangingDescription ->
+                    { photo | changingDescription = False }
+    in
+        ( nextPhoto, Cmd.none )
+
+
 
 -- View
 
