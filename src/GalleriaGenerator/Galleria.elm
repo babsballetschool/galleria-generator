@@ -44,6 +44,7 @@ type Message
     | UpdateTitle String
     | ChooseTitle
     | AddPhoto String
+    | PhotoMessage Int Photo.Message
 
 
 update : Message -> Gallery -> ( Gallery, Cmd msg )
@@ -69,14 +70,38 @@ update message gallery =
                     else
                         let
                             photo =
-                                { src = src
-                                , title = Nothing
-                                , changingTitle = False
-                                , description = Nothing
-                                , changingDescription = False
-                                }
+                                Photo.new src
                         in
                             { gallery | photos = gallery.photos ++ [ photo ] }
+
+                PhotoMessage index message ->
+                     let
+                         front = gallery.photos
+                                 |> List.take index
+
+                         photo =
+                             gallery.photos
+                                |> List.drop index
+                                |> List.head
+
+                         back = gallery.photos
+                                |> List.drop index
+                                |> List.tail
+                                |> Maybe.withDefault []
+
+                         nextPhoto =
+                             case photo of
+                                 Just actualPhoto ->
+                                     let
+                                         (nextPhoto, _) = Photo.update message actualPhoto
+                                     in
+                                       [ nextPhoto ]
+
+                                 Nothing -> []
+
+                         nextPhotos = front ++ nextPhoto ++ back
+                     in
+                         { gallery | photos = nextPhotos }
     in
         ( nextGallery, Cmd.none )
 
@@ -121,4 +146,12 @@ title gallery =
 
 photosView : List Photo.Photo -> List (Html.Html Message)
 photosView photos =
-    List.map Photo.view photos
+    let
+        mapper : Int -> Photo.Photo -> Html.Html Message
+        mapper index photo =
+            photo
+                |> Photo.view
+                |> Html.map (PhotoMessage index)
+    in
+        photos
+            |> List.indexedMap mapper

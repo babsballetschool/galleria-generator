@@ -1,8 +1,10 @@
-module GalleriaGenerator.Photo exposing (Photo, encode, view)
+module GalleriaGenerator.Photo exposing (Photo, encode, view, Message, update, new)
 
 import Html
 import Html.Attributes as Attribute
+import Html.Events as Event
 import Json.Encode as Encode
+import GalleriaGenerator.Events exposing (onKeyDown, whenEnter)
 
 
 -- Model
@@ -14,6 +16,16 @@ type alias Photo =
     , changingTitle : Bool
     , description : Maybe String
     , changingDescription : Bool
+    }
+
+
+new : String -> Photo
+new src =
+    { src = src
+    , title = Nothing
+    , changingTitle = False
+    , description = Nothing
+    , changingDescription = False
     }
 
 
@@ -44,12 +56,13 @@ encode photo =
 
 
 type Message
-    = StartChangingTitle
+    = DoNothing
+    | ChangeTitle
     | UpdateTitle String
-    | StopChangingTitle
-    | StartChangingDescription
+    | ChooseTitle
+    | ChangeDescription
     | UpdateDescription String
-    | StopChangingDescription
+    | ChooseDescription
 
 
 update : Message -> Photo -> ( Photo, Cmd msg )
@@ -57,7 +70,10 @@ update message photo =
     let
         nextPhoto =
             case message of
-                StartChangingTitle ->
+                DoNothing ->
+                    photo
+
+                ChangeTitle ->
                     { photo | changingTitle = True }
 
                 UpdateTitle title ->
@@ -66,10 +82,10 @@ update message photo =
                     else
                         { photo | title = Just title }
 
-                StopChangingTitle ->
+                ChooseTitle ->
                     { photo | changingTitle = False }
 
-                StartChangingDescription ->
+                ChangeDescription ->
                     { photo | changingDescription = True }
 
                 UpdateDescription description ->
@@ -78,7 +94,7 @@ update message photo =
                     else
                         { photo | description = Just description }
 
-                StopChangingDescription ->
+                ChooseDescription ->
                     { photo | changingDescription = False }
     in
         ( nextPhoto, Cmd.none )
@@ -88,7 +104,7 @@ update message photo =
 -- View
 
 
-view : Photo -> Html.Html msg
+view : Photo -> Html.Html Message
 view photo =
     let
         titleValue photo =
@@ -104,18 +120,35 @@ view photo =
                 , Attribute.for "photo-title"
                 ]
                 [ Html.text "title:" ]
-            , (photoAttribute .changingTitle titleValue photo "title" "photo-title")
+            , (photoAttribute .changingTitle
+                titleValue
+                photo
+                "title"
+                "photo-title"
+                ChangeTitle
+                ChooseTitle
+                UpdateTitle
+              )
             , Html.label
                 [ Attribute.class "description-label"
                 , Attribute.for "photo-description"
                 ]
                 [ Html.text "description:" ]
-            , (photoAttribute .changingDescription descriptionValue photo "description" "photo-description")
+            , (photoAttribute
+                .changingDescription
+                descriptionValue
+                photo
+                "description"
+                "photo-description"
+                ChangeDescription
+                ChooseDescription
+                UpdateDescription
+              )
             ]
 
 
-photoAttribute : (Photo -> Bool) -> (Photo -> String) -> Photo -> String -> String -> Html.Html msg
-photoAttribute changing valueOf photo placeholder name =
+photoAttribute : (Photo -> Bool) -> (Photo -> String) -> Photo -> String -> String -> Message -> Message -> (String -> Message) -> Html.Html Message
+photoAttribute changing valueOf photo placeholder name startMessage stopMessage updateMessage =
     let
         value =
             valueOf photo
@@ -126,7 +159,13 @@ photoAttribute changing valueOf photo placeholder name =
                 , Attribute.placeholder placeholder
                 , Attribute.name name
                 , Attribute.value value
+                , Event.onInput updateMessage
+                , onKeyDown (whenEnter stopMessage DoNothing)
                 ]
                 []
         else
-            Html.text ("'" ++ value ++ "'")
+            Html.span
+                [ Attribute.class "photo title"
+                , Event.onClick startMessage
+                ]
+                [ Html.text ("'" ++ value ++ "'") ]
