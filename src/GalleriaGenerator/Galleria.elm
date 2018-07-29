@@ -20,7 +20,9 @@ type alias Gallery =
 type alias Photo =
     { src : String
     , title : Maybe String
+    , changingTitle : Bool
     , description : Maybe String
+    , changingDescription : Bool
     }
 
 
@@ -94,7 +96,12 @@ update message gallery =
                         let
                             photo : Photo
                             photo =
-                                { src = src, title = Nothing, description = Nothing }
+                                { src = src
+                                , title = Nothing
+                                , changingTitle = False
+                                , description = Nothing
+                                , changingDescription = False
+                                }
                         in
                             { gallery | photos = gallery.photos ++ [ photo ] }
     in
