@@ -3,6 +3,8 @@ module GalleriaGenerator.Photo exposing (Photo, encode, view, Message, update, n
 import Html
 import Html.Attributes as Attribute
 import Html.Events as Event
+import Json.Decode as Decode
+import Json.Decode.Pipeline as Pipeline exposing (required, hardcoded)
 import Json.Encode as Encode
 import GalleriaGenerator.Events exposing (onKeyDown, whenEnter)
 
@@ -49,6 +51,20 @@ encode photo =
             , ( "title", encodeOptionalString photo.title )
             , ( "description", encodeOptionalString photo.description )
             ]
+
+
+
+-- Decoding
+
+
+decode : Decode.Decoder Photo
+decode =
+    Pipeline.decode Photo
+        |> required "src" Decode.string
+        |> required "title" (Decode.nullable Decode.string)
+        |> hardcoded False
+        |> required "description" (Decode.nullable Decode.string)
+        |> hardcoded False
 
 
 
