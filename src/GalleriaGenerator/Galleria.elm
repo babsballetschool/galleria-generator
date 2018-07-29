@@ -5,6 +5,7 @@ import Html.Attributes as Attribute
 import Html.Events as Event
 import Json.Encode as Encode
 import GalleriaGenerator.Events exposing (onKeyDown, whenEnter)
+import GalleriaGenerator.Photo as Photo
 
 
 -- Model
@@ -13,16 +14,7 @@ import GalleriaGenerator.Events exposing (onKeyDown, whenEnter)
 type alias Gallery =
     { title : String
     , changingTitle : Bool
-    , photos : List Photo
-    }
-
-
-type alias Photo =
-    { src : String
-    , title : Maybe String
-    , changingTitle : Bool
-    , description : Maybe String
-    , changingDescription : Bool
+    , photos : List Photo.Photo
     }
 
 
@@ -34,29 +26,11 @@ encodeGallery : Gallery -> Encode.Value
 encodeGallery gallery =
     let
         photos =
-            List.map encodePhoto gallery.photos
+            List.map Photo.encode gallery.photos
     in
         Encode.object
             [ ( "title", Encode.string gallery.title )
             , ( "photos", Encode.list photos )
-            ]
-
-
-encodePhoto : Photo -> Encode.Value
-encodePhoto photo =
-    let
-        encodeOptionalString wrappedValue =
-            case wrappedValue of
-                Just value ->
-                    Encode.string value
-
-                Nothing ->
-                    Encode.null
-    in
-        Encode.object
-            [ ( "src", Encode.string photo.src )
-            , ( "title", encodeOptionalString photo.title )
-            , ( "description", encodeOptionalString photo.description )
             ]
 
 
@@ -94,7 +68,6 @@ update message gallery =
                         gallery
                     else
                         let
-                            photo : Photo
                             photo =
                                 { src = src
                                 , title = Nothing
@@ -146,42 +119,6 @@ title gallery =
             ]
 
 
-photosView : List Photo -> List (Html.Html Message)
+photosView : List Photo.Photo -> List (Html.Html Message)
 photosView photos =
-    List.map photoView photos
-
-
-photoView : Photo -> Html.Html Message
-photoView photo =
-    let
-        titleValue photo =
-            Maybe.withDefault "" photo.title
-
-        descriptionValue photo =
-            Maybe.withDefault "" photo.description
-    in
-        Html.div [ Attribute.class "photo" ]
-            [ Html.span [ Attribute.class "source" ] [ Html.text photo.src ]
-            , Html.label [ Attribute.class "title-label", Attribute.for "photo-title" ] [ Html.text "title:" ]
-            , (photoAttribute .changingTitle titleValue photo "title" "photo-title")
-            , Html.label [ Attribute.class "description-label", Attribute.for "photo-description" ] [ Html.text "description:" ]
-            , (photoAttribute .changingDescription descriptionValue photo "description" "photo-description")
-            ]
-
-
-photoAttribute : (Photo -> Bool) -> (Photo -> String) -> Photo -> String -> String -> Html.Html Message
-photoAttribute changing valueOf photo placeholder name =
-    let
-        value =
-            valueOf photo
-    in
-        if changing photo then
-            Html.input
-                [ Attribute.type_ "input"
-                , Attribute.placeholder placeholder
-                , Attribute.name name
-                , Attribute.value value
-                ]
-                []
-        else
-            Html.text ("'" ++ value ++ "'")
+    List.map Photo.view photos
